@@ -315,9 +315,10 @@ def main():
     parser.add_argument('-r', '--max-results', type=int, nargs='?',
                         default=None,
                         help="maximum results to fetch from arXiv")
+    parser.add_argument('-p', '--print-all', action='store_true',
+                        help="print all acronyms found")
     parser.add_argument('-f', '--find', action='store_true',
-                        help="finds instances of the acronym (instead of "
-                             "generating it)")
+                        help="finds instances of the acronym")
     parser.add_argument('acronym', type=str, nargs='?', default=None,
                         metavar='A', help="the acronym to create")
 
@@ -332,6 +333,11 @@ def main():
 
     if args.find:
         for acr, exp in index.find_acronyms(args.acronym):
+            print acr, exp
+    elif args.print_all:
+        acrs = list(reduce(lambda a, b: a | b, index.acronyms.values(), set()))
+        acrs.sort(key=lambda x: x[0].lower())
+        for acr, exp in acrs:
             print acr, exp
     else:
         print index.gen_acronym(args.acronym)
